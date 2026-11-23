@@ -1,0 +1,85 @@
+{
+  "fecha": "2025-11-18",
+  "modelo": "ecovision_mobilenetv2",
+  "backbone": "MobileNetV2 (include_top=False, weights=imagenet, congelado)",
+  "entrada": {
+    "shape": [
+      224,
+      224,
+      3
+    ],
+    "rango": [
+      -1,
+      1
+    ],
+    "nota": "preprocess_input aplicado en el generador, NO en el modelo"
+  },
+  "cabeza": [
+    {
+      "capa": "GlobalAveragePooling2D",
+      "params": 0
+    },
+    {
+      "capa": "Dropout",
+      "rate": 0.3,
+      "params": 0
+    },
+    {
+      "capa": "Dense",
+      "units": 128,
+      "activation": "relu",
+      "params": 163968
+    },
+    {
+      "capa": "Dropout",
+      "rate": 0.3,
+      "params": 0
+    },
+    {
+      "capa": "Dense",
+      "units": 6,
+      "activation": "softmax",
+      "params": 774
+    }
+  ],
+  "parametros": {
+    "total": 2422726,
+    "entrenables": 164742,
+    "no_entrenables": 2257984
+  },
+  "compilacion": {
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "loss": "sparse_categorical_crossentropy",
+    "metrics": [
+      "accuracy",
+      "auc"
+    ]
+  },
+  "callbacks": {
+    "ModelCheckpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true,
+      "filepath": "model/ecovision_model.keras"
+    },
+    "EarlyStopping": {
+      "monitor": "val_loss",
+      "patience": 8,
+      "restore_best_weights": true
+    },
+    "ReduceLROnPlateau": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 3,
+      "min_lr": 1e-06
+    }
+  },
+  "class_weight_usado": {
+    "cardboard": 1.0437,
+    "glass": 0.8386,
+    "metal": 1.0291,
+    "paper": 0.7075,
+    "plastic": 0.876,
+    "trash": 3.0982
+  }
+}

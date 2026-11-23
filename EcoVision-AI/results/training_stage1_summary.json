@@ -1,0 +1,30 @@
+{
+  "fecha": "2025-11-19",
+  "etapa": "stage1_backbone_congelado",
+  "epochs_configuradas": 30,
+  "epochs_completadas": 29,
+  "early_stopping_actuo": true,
+  "duracion_minutos": null,
+  "duracion_nota": "Sesi\u00f3n original desconectada; duraci\u00f3n no recuperable.",
+  "mejor_val_loss": 0.4315555095672607,
+  "epoca_mejor_val_loss": 21,
+  "mejor_val_accuracy": 0.8548812866210938,
+  "epoca_mejor_val_accuracy": 26,
+  "evaluacion_validacion_mejor_ckpt": {
+    "loss": 0.43155550956726074,
+    "accuracy": 0.8416886329650879
+  },
+  "lr_inicial": 0.0010000000474974,
+  "lr_final": 0.0001250000059371,
+  "reduce_lr_actuo": true,
+  "checkpoint": "/content/drive/MyDrive/EcoVision-AI/model/ecovision_model_stage1.keras",
+  "class_weight_usado": {
+    "cardboard": 1.0437,
+    "glass": 0.8386,
+    "metal": 1.0291,
+    "paper": 0.7075,
+    "plastic": 0.876,
+    "trash": 3.0982
+  },
+  "nota_auc": "AUC multiclase se calcula en el d\u00eda 20 con sklearn.metrics.roc_auc_score(..., multi_class='ovr')."
+}

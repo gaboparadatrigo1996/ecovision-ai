@@ -1,0 +1,36 @@
+# Python y entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Node y Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+
+# Logs y depuración
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Editores y sistema operativo
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Mantener los modelos Keras (pesan 11.6 MB, permitido en GitHub < 100 MB)
+!*.keras
+!*.json
