@@ -34,3 +34,4 @@ Thumbs.db
 # Mantener los modelos Keras (pesan 11.6 MB, permitido en GitHub < 100 MB)
 !*.keras
 !*.json
+hf_space/
