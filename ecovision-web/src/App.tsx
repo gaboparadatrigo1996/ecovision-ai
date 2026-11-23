@@ -34,26 +34,31 @@ export function App() {
 
   const { speak, stop, isSpeaking } = useSpeech();
 
-  // Comprobar estado de conexión con la API
-  const verifyBackend = useCallback(() => {
-    setBackendReady(null);
+  // Comprobar estado de conexión con la API (sin parpadeos molestos)
+  const verifyBackend = useCallback((silent = false) => {
+    if (!silent) setBackendReady(null);
     checkHealth().then((status) => {
-      setBackendReady(status.ok && status.model_loaded);
-      if (status.error) setBackendError(status.error);
-      else setBackendError(null);
+      if (status.ok && status.model_loaded) {
+        setBackendReady(true);
+        setBackendError(null);
+      } else {
+        setBackendReady(false);
+        setBackendError(status.error || "No se pudo conectar");
+      }
     });
   }, []);
 
   useEffect(() => {
-    verifyBackend();
+    // Comprobación inicial
+    verifyBackend(false);
 
-    // Reintentar frecuentemente si está conectando o despertando
+    // Verificación silenciosa en segundo plano cada 30 segundos
     const interval = setInterval(() => {
-      verifyBackend();
-    }, backendReady ? 25000 : 6000);
+      verifyBackend(true);
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, [verifyBackend, backendReady]);
+  }, [verifyBackend]);
 
   // Manejador global de arrastrar y soltar (Drag and Drop)
   useEffect(() => {
@@ -143,6 +148,8 @@ export function App() {
     try {
       const result = await predict(selectedFile);
       setPrediction(result);
+      setBackendReady(true);
+      setBackendError(null);
       setStage("result");
 
       // Guardar en el historial local
@@ -233,40 +240,37 @@ export function App() {
           <div className="flex items-center gap-3">
             {/* Estado del Backend */}
             <div
-              onClick={() => {
-                setBackendReady(null);
-                verifyBackend();
-              }}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold border cursor-pointer select-none transition-colors ${
+              onClick={() => verifyBackend(false)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer select-none transition-colors ${
                 backendReady === true
                   ? "bg-emerald-50 text-emerald-800 border-emerald-300"
                   : backendReady === false
                   ? "bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100"
-                  : "bg-amber-50 text-amber-800 border-amber-300"
+                  : "bg-slate-100 text-slate-700 border-slate-300"
               }`}
               title={
                 backendReady === true
-                  ? "Servidor conectado y listo"
+                  ? "API en la nube conectada y lista"
                   : backendReady === false
-                  ? (backendError ? `Error: ${backendError} (clic para reintentar)` : "Servidor en reposo. Clic para reintentar.")
-                  : "Conectando con la API en Render..."
+                  ? `Error: ${backendError || "sin conexión"}. Haz clic para reintentar.`
+                  : "Comprobando conexión..."
               }
             >
               <span
                 className={`w-2 h-2 rounded-full ${
                   backendReady === true
-                    ? "bg-emerald-600"
+                    ? "bg-emerald-500"
                     : backendReady === false
-                    ? "bg-rose-600"
-                    : "bg-amber-500 animate-ping"
+                    ? "bg-rose-500"
+                    : "bg-amber-400 animate-pulse"
                 }`}
               />
-              <span className="hidden sm:inline">
+              <span className="font-semibold">
                 {backendReady === true
-                  ? "API Conectada"
+                  ? "En línea"
                   : backendReady === false
-                  ? "Reconectar API"
-                  : "Conectando API..."}
+                  ? "Reconectar"
+                  : "Conectando..."}
               </span>
             </div>
 
