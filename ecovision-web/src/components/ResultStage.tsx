@@ -38,7 +38,7 @@ export const ResultStage: React.FC<ResultStageProps> = ({
   };
 
   return (
-    <div className="flex-1 w-full max-w-5xl mx-auto px-3.5 sm:px-4 py-6 md:py-12 flex flex-col items-center">
+    <div className="flex-1 w-full max-w-5xl mx-auto px-3.5 sm:px-4 py-6 md:py-12 pb-28 lg:pb-12 flex flex-col items-center">
       {/* Título de Confirmación Superior */}
       <div className="text-center space-y-1.5 sm:space-y-2 mb-6 sm:mb-8 w-full">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -153,15 +153,15 @@ export const ResultStage: React.FC<ResultStageProps> = ({
           </div>
         </div>
 
-        {/* Columna Derecha: Probabilidades y Acciones */}
+        {/* Columna Derecha: Probabilidades y Acciones (En escritorio) */}
         <div className="lg:col-span-6 space-y-4">
           <ProbBars
             probabilities={prediction.probabilities}
             predictedClass={prediction.class}
           />
 
-          {/* Botón para Clasificar Otro Residuo */}
-          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
+          {/* Botón para Clasificar Otro Residuo en Escritorio */}
+          <div className="hidden lg:block bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
             <button
               type="button"
               onClick={onReset}
@@ -172,6 +172,29 @@ export const ResultStage: React.FC<ResultStageProps> = ({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Botón Flotante Pegajoso (Sticky) en Móvil: no requiere scroll */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 z-30 shadow-lg flex gap-2.5">
+        <button
+          type="button"
+          onClick={onReset}
+          className="flex-1 py-3.5 px-4 bg-slate-900 active:bg-black text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-[0.98]"
+        >
+          <RotateCcw className="w-4 h-4" />
+          <span>Clasificar otro residuo</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleToggleSpeak}
+          title={isSpeaking ? "Detener voz" : "Escuchar recomendación"}
+          className={`px-4 py-3.5 rounded-xl font-bold text-white shadow-md transition-all flex items-center justify-center cursor-pointer active:scale-[0.98] ${
+            isSpeaking ? "bg-slate-700 active:bg-slate-800" : "bg-[#e5322d] active:bg-[#cb201b]"
+          }`}
+        >
+          {isSpeaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+        </button>
       </div>
     </div>
   );
