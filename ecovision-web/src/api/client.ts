@@ -56,7 +56,7 @@ export async function predict(file: File): Promise<Prediction> {
 
   // Render en plan gratis puede tardar hasta 45s en despertar de reposo (cold start)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000);
+  const timeoutId = setTimeout(() => controller.abort(), 65000);
 
   try {
     const res = await fetch(`${API_BASE_URL}/predict`, {
@@ -99,7 +99,7 @@ export async function predict(file: File): Promise<Prediction> {
   }
 }
 
-export async function checkHealth(): Promise<{ ok: boolean; model_loaded: boolean }> {
+export async function checkHealth(): Promise<{ ok: boolean; model_loaded: boolean; error?: string }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12000);
 
@@ -112,12 +112,15 @@ export async function checkHealth(): Promise<{ ok: boolean; model_loaded: boolea
       }
     });
     clearTimeout(timer);
-    if (!res.ok) return { ok: false, model_loaded: false };
+    if (!res.ok) {
+      return { ok: false, model_loaded: false, error: `Estado HTTP ${res.status}` };
+    }
     const data = await res.json();
     return { ok: Boolean(data.ok), model_loaded: Boolean(data.model_loaded) };
-  } catch (err) {
+  } catch (err: unknown) {
     clearTimeout(timer);
+    const msg = err instanceof Error ? err.message : String(err);
     console.warn("Fallo al verificar API en:", `${API_BASE_URL}/health`, err);
-    return { ok: false, model_loaded: false };
+    return { ok: false, model_loaded: false, error: msg };
   }
 }

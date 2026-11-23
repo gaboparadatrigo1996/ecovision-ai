@@ -22,6 +22,7 @@ export function App() {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [backendReady, setBackendReady] = useState<boolean | null>(null);
+  const [backendError, setBackendError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>(() => {
     try {
       const saved = localStorage.getItem("ecovision_history");
@@ -35,8 +36,11 @@ export function App() {
 
   // Comprobar estado de conexión con la API
   const verifyBackend = useCallback(() => {
+    setBackendReady(null);
     checkHealth().then((status) => {
       setBackendReady(status.ok && status.model_loaded);
+      if (status.error) setBackendError(status.error);
+      else setBackendError(null);
     });
   }, []);
 
@@ -244,7 +248,7 @@ export function App() {
                 backendReady === true
                   ? "Servidor conectado y listo"
                   : backendReady === false
-                  ? "El servidor en Render puede estar despertando. Clic para reintentar."
+                  ? (backendError ? `Error: ${backendError} (clic para reintentar)` : "Servidor en reposo. Clic para reintentar.")
                   : "Conectando con la API en Render..."
               }
             >
