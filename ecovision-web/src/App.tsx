@@ -216,7 +216,7 @@ export function App() {
       <DragOverlay isVisible={isDraggingOver} />
 
       {/* Barra de Navegación Superior */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3">
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-3 sm:px-4 py-2.5 sm:py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo estilo iLovePDF con color entero */}
           <div
@@ -348,15 +348,8 @@ export function App() {
       </main>
 
       {/* Pie de Página */}
-      <footer className="border-t border-slate-200 bg-white py-6 px-4 text-center text-xs text-slate-500">
-        <div className="max-w-5xl mx-auto space-y-1">
-          <p>
-            EcoVision AI — Clasificador de Residuos Urbanos con <strong>MobileNetV2</strong> y <strong>FastAPI</strong>.
-          </p>
-          <p>
-            Entrenado con <strong>Stanford TrashNet</strong> (2,527 imágenes, 6 clases) • Exactitud global en test: 88.65%
-          </p>
-        </div>
+      <footer className="border-t border-slate-200 bg-white py-4 px-4 text-center text-xs text-slate-500 font-semibold tracking-wider select-none">
+        EcoVision AI
       </footer>
 
       {/* Modal Acerca de */}

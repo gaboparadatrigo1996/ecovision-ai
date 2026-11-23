@@ -26,8 +26,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ onFileSelect, onSampleSele
   ];
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-12 md:py-16 max-w-4xl mx-auto w-full">
-      {/* Inputs ocultos */}
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-8 sm:py-16 max-w-4xl mx-auto w-full">
+      {/* Inputs ocultos de archivo y cámara */}
       <input
         ref={fileInputRef}
         type="file"
@@ -45,54 +45,54 @@ export const HeroStage: React.FC<HeroStageProps> = ({ onFileSelect, onSampleSele
       />
 
       {/* Título Principal */}
-      <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
         Clasificar Residuo
       </h1>
 
       {/* Subtítulo explicativo */}
-      <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
-        Identifica al instante si tu objeto es plástico, papel, cartón, vidrio o metal mediante Inteligencia Artificial y descubre la manera correcta de reciclarlo.
+      <p className="mt-2.5 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-600 max-w-xl leading-relaxed">
+        Identifica al instante si tu objeto es plástico, papel, cartón, vidrio o metal mediante Inteligencia Artificial y descubre cómo reciclarlo.
       </p>
 
-      {/* Botón Principal de Acción (Estilo iLovePDF) */}
-      <div className="mt-10 flex items-center justify-center gap-3 w-full max-w-md">
+      {/* Botones Principales de Acción para móvil y escritorio */}
+      <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-md">
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex-1 bg-[#e5322d] hover:bg-[#d32722] text-white font-bold py-4 sm:py-5 px-6 sm:px-8 rounded-xl text-lg sm:text-xl shadow-md transition-colors flex items-center justify-center gap-3 cursor-pointer select-none"
+          className="flex-1 h-14 sm:h-16 bg-[#e5322d] hover:bg-[#d32722] active:bg-[#cb201b] text-white font-bold px-4 sm:px-8 rounded-xl text-base sm:text-xl shadow-md transition-all flex items-center justify-center gap-2 sm:gap-3 cursor-pointer select-none active:scale-[0.98]"
         >
-          <ImageIcon className="w-6 h-6" />
+          <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
           <span>Seleccionar imagen</span>
         </button>
 
-        {/* Botón de Cámara Directa */}
+        {/* Botón de Cámara Móvil */}
         <button
           type="button"
           onClick={() => cameraInputRef.current?.click()}
           title="Tomar foto con la cámara"
-          className="p-4 sm:p-5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl shadow-md transition-colors cursor-pointer"
+          className="w-14 sm:w-16 h-14 sm:h-16 bg-slate-800 hover:bg-slate-900 active:bg-slate-950 text-white rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center shrink-0 active:scale-[0.98]"
         >
-          <Camera className="w-6 h-6" />
+          <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </div>
 
       {/* Texto de Arrastrar y Soltar */}
-      <p className="mt-4 text-sm text-slate-500 font-medium">
-        o arrastra y suelta los documentos o fotos aquí
+      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500 font-medium">
+        o arrastra y suelta tu foto aquí
       </p>
 
-      {/* Selector de Muestras Rápidas */}
-      <div className="mt-12 pt-8 border-t border-slate-200 w-full max-w-2xl">
-        <p className="text-xs uppercase tracking-wider font-bold text-slate-600 mb-4">
-          ¿No tienes una foto a mano? Prueba con una muestra del dataset:
+      {/* Selector de Muestras Rápidas adaptado a cuadrícula en celular */}
+      <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200 w-full max-w-2xl">
+        <p className="text-[11px] sm:text-xs uppercase tracking-wider font-bold text-slate-600 mb-3 sm:mb-4">
+          ¿No tienes una foto a mano? Prueba con una muestra:
         </p>
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 w-full">
           {samples.map((s) => (
             <button
               key={s.file}
               type="button"
               onClick={() => onSampleSelect(s.label, s.file)}
-              className="px-3.5 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+              className="py-2.5 px-3 bg-white hover:bg-slate-100 active:bg-slate-200 border border-slate-300 text-slate-800 rounded-lg text-xs sm:text-xs font-semibold shadow-sm transition-all cursor-pointer text-center active:scale-[0.98]"
             >
               {s.label}
             </button>
