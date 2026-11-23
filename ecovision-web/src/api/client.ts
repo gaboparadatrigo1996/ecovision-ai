@@ -1,10 +1,11 @@
 import { Prediction } from "../types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const RAW_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL = RAW_URL.replace(/\/+$/, "");
 
 /**
- * Redimensiona una imagen en el cliente si es muy pesada (> 1600px)
- * para optimizar la transferencia y latencia.
+ * Redimensiona una imagen en el cliente si es muy pesada (> 1400px)
+ * para optimizar la transferencia, ancho de banda y latencia hacia la API en la nube.
  */
 async function optimizeImageForUpload(file: File): Promise<Blob> {
   if (file.size < 1.5 * 1024 * 1024) {
@@ -53,8 +54,9 @@ export async function predict(file: File): Promise<Prediction> {
   const formData = new FormData();
   formData.append("file", optimizedBlob, file.name);
 
+  // Render en plan gratis puede tardar hasta 45s en despertar de reposo (cold start)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 20000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
     const res = await fetch(`${API_BASE_URL}/predict`, {
@@ -83,12 +85,12 @@ export async function predict(file: File): Promise<Prediction> {
     if (err instanceof Error) {
       if (err.name === "AbortError") {
         throw new Error(
-          "El servidor tardó demasiado en responder (puede estar iniciando o despertando)."
+          "El servidor en la nube tardó demasiado en responder. Si Render estaba en reposo, dale 30 segundos y reintenta."
         );
       }
       if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
         throw new Error(
-          `No se pudo conectar con la API en ${API_BASE_URL}. Asegúrate de que el backend esté corriendo.`
+          `No se pudo conectar con la API en ${API_BASE_URL}. Verifica que el servicio en Render esté activo.`
         );
       }
       throw err;
@@ -98,13 +100,24 @@ export async function predict(file: File): Promise<Prediction> {
 }
 
 export async function checkHealth(): Promise<{ ok: boolean; model_loaded: boolean }> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+
   try {
     const res = await fetch(`${API_BASE_URL}/health`, {
-      signal: AbortSignal.timeout(4000)
+      method: "GET",
+      signal: controller.signal,
+      headers: {
+        "Accept": "application/json"
+      }
     });
+    clearTimeout(timer);
     if (!res.ok) return { ok: false, model_loaded: false };
-    return await res.json();
-  } catch {
+    const data = await res.json();
+    return { ok: Boolean(data.ok), model_loaded: Boolean(data.model_loaded) };
+  } catch (err) {
+    clearTimeout(timer);
+    console.warn("Fallo al verificar API en:", `${API_BASE_URL}/health`, err);
     return { ok: false, model_loaded: false };
   }
 }

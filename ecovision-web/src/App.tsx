@@ -34,19 +34,22 @@ export function App() {
   const { speak, stop, isSpeaking } = useSpeech();
 
   // Comprobar estado de conexión con la API
-  useEffect(() => {
+  const verifyBackend = useCallback(() => {
     checkHealth().then((status) => {
       setBackendReady(status.ok && status.model_loaded);
     });
+  }, []);
 
+  useEffect(() => {
+    verifyBackend();
+
+    // Reintentar frecuentemente si está conectando o despertando
     const interval = setInterval(() => {
-      checkHealth().then((status) => {
-        setBackendReady(status.ok && status.model_loaded);
-      });
-    }, 15000);
+      verifyBackend();
+    }, backendReady ? 25000 : 6000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [verifyBackend, backendReady]);
 
   // Manejador global de arrastrar y soltar (Drag and Drop)
   useEffect(() => {
@@ -226,14 +229,24 @@ export function App() {
           <div className="flex items-center gap-3">
             {/* Estado del Backend */}
             <div
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold border ${
+              onClick={() => {
+                setBackendReady(null);
+                verifyBackend();
+              }}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold border cursor-pointer select-none transition-colors ${
                 backendReady === true
                   ? "bg-emerald-50 text-emerald-800 border-emerald-300"
                   : backendReady === false
-                  ? "bg-rose-50 text-rose-800 border-rose-300"
-                  : "bg-slate-100 text-slate-600 border-slate-200"
+                  ? "bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100"
+                  : "bg-amber-50 text-amber-800 border-amber-300"
               }`}
-              title={backendReady ? "Servidor conectado" : "Verificando backend"}
+              title={
+                backendReady === true
+                  ? "Servidor conectado y listo"
+                  : backendReady === false
+                  ? "El servidor en Render puede estar despertando. Clic para reintentar."
+                  : "Conectando con la API en Render..."
+              }
             >
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -241,11 +254,15 @@ export function App() {
                     ? "bg-emerald-600"
                     : backendReady === false
                     ? "bg-rose-600"
-                    : "bg-amber-500"
+                    : "bg-amber-500 animate-ping"
                 }`}
               />
               <span className="hidden sm:inline">
-                {backendReady ? "API Conectada" : "Verificando API"}
+                {backendReady === true
+                  ? "API Conectada"
+                  : backendReady === false
+                  ? "Reconectar API"
+                  : "Conectando API..."}
               </span>
             </div>
 
