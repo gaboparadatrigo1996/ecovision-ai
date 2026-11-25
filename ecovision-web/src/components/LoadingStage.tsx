@@ -1,35 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Leaf } from "lucide-react";
 
-interface LoadingStageProps {
-  filename?: string;
-}
-
-export const LoadingStage: React.FC<LoadingStageProps> = ({ filename }) => {
+export const LoadingStage: React.FC<{ filename?: string }> = ({ filename }) => {
+  const [takingLonger, setTakingLonger] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setTakingLonger(true), 12000);
+    return () => clearTimeout(timer);
+  }, []);
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 min-h-[calc(100vh-64px)] bg-[#f4f5f8]">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-10 text-center shadow-md space-y-6">
-        {/* Spinner Circular con Colores Enteros */}
-        <div className="relative w-20 h-20 mx-auto">
-          <div className="w-20 h-20 rounded-full border-4 border-slate-200 border-t-[#e5322d] animate-spin" />
-        </div>
-
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-slate-900">
-            Analizando residuo con IA...
-          </h2>
-          <p className="text-sm text-slate-600">
-            {filename ? (
-              <span>Procesando <strong className="text-slate-800">{filename}</strong> con MobileNetV2...</span>
-            ) : (
-              "Extrayendo características visuales y calculando probabilidades..."
-            )}
-          </p>
-        </div>
-
-        <div className="pt-4 border-t border-slate-100 text-xs text-slate-400">
-          Por favor, espera un momento.
-        </div>
+    <section className="loading-stage" aria-busy="true" aria-labelledby="loading-title">
+      <div className="loading-card">
+        <div className="loading-orbit" aria-hidden="true"><Leaf size={32} strokeWidth={1.5} /></div>
+        <span className="section-kicker">UNA NUEVA PERSPECTIVA</span>
+        <h1 id="loading-title">Cada material tiene<br />otra oportunidad.</h1>
+        <p role="status">{takingLonger ? "El servicio está tardando un poco más. Seguimos esperando tu resultado…" : "Estamos analizando tu imagen para ayudarte a reciclar mejor."}</p>
+        <div className="indeterminate-track" aria-hidden="true"><span /></div>
+        <span className="loading-filename">{filename}</span>
+        <p className="loading-note">Mantén esta ventana abierta mientras terminamos.</p>
       </div>
-    </div>
+    </section>
   );
 };

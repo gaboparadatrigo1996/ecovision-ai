@@ -1,104 +1,62 @@
 import React, { useRef } from "react";
-import { Camera, Image as ImageIcon } from "lucide-react";
+import { Camera, ImagePlus, Leaf, ScanLine, Recycle, Mountain, LoaderCircle } from "lucide-react";
 
 interface HeroStageProps {
   onFileSelect: (file: File) => void;
   onSampleSelect: (sampleName: string, filename: string) => void;
+  sampleLoading: string | null;
 }
 
-export const HeroStage: React.FC<HeroStageProps> = ({ onFileSelect, onSampleSelect }) => {
+export const HeroStage: React.FC<HeroStageProps> = ({ onFileSelect, onSampleSelect, sampleLoading }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      onFileSelect(e.target.files[0]);
-    }
+    const file = e.target.files?.[0];
+    if (file) onFileSelect(file);
+    e.target.value = "";
   };
-
   const samples = [
-    { label: "📦 Cartón", file: "A_carton1.jpg" },
-    { label: "🍾 Vidrio", file: "A_vidrio1.jpg" },
-    { label: "🥫 Metal", file: "A_metal1.jpg" },
-    { label: "📄 Papel", file: "A_papel1.jpg" },
-    { label: "🥤 Plástico", file: "B_plastico2.jpg" },
-    { label: "🗑️ Otros", file: "B_otros1.jpg" },
+    { label: "Cartón", file: "A_carton1.jpg" },
+    { label: "Vidrio", file: "A_vidrio1.jpg" },
+    { label: "Metal", file: "A_metal1.jpg" },
+    { label: "Papel", file: "A_papel1.jpg" },
+    { label: "Otros", file: "B_otros1.jpg" },
   ];
-
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-8 sm:py-16 max-w-4xl mx-auto w-full">
-      {/* Inputs ocultos de archivo y cámara */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      {/* Título Principal */}
-      <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-        Clasificar Residuo
-      </h1>
-
-      {/* Subtítulo explicativo */}
-      <p className="mt-2.5 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-600 max-w-xl leading-relaxed">
-        Identifica al instante si tu objeto es plástico, papel, cartón, vidrio o metal mediante Inteligencia Artificial y descubre cómo reciclarlo.
-      </p>
-
-      {/* Botones Principales de Acción para móvil y escritorio */}
-      <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-md">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="flex-1 h-14 sm:h-16 bg-[#e5322d] hover:bg-[#d32722] active:bg-[#cb201b] text-white font-bold px-4 sm:px-8 rounded-xl text-base sm:text-xl shadow-md transition-all flex items-center justify-center gap-2 sm:gap-3 cursor-pointer select-none active:scale-[0.98]"
-        >
-          <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
-          <span>Seleccionar imagen</span>
-        </button>
-
-        {/* Botón de Cámara Móvil */}
-        <button
-          type="button"
-          onClick={() => cameraInputRef.current?.click()}
-          title="Tomar foto con la cámara"
-          className="w-14 sm:w-16 h-14 sm:h-16 bg-slate-800 hover:bg-slate-900 active:bg-slate-950 text-white rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center shrink-0 active:scale-[0.98]"
-        >
-          <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
-      </div>
-
-      {/* Texto de Arrastrar y Soltar */}
-      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500 font-medium">
-        o arrastra y suelta tu foto aquí
-      </p>
-
-      {/* Selector de Muestras Rápidas adaptado a cuadrícula en celular */}
-      <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200 w-full max-w-2xl">
-        <p className="text-[11px] sm:text-xs uppercase tracking-wider font-bold text-slate-600 mb-3 sm:mb-4">
-          ¿No tienes una foto a mano? Prueba con una muestra:
-        </p>
-        <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 w-full">
-          {samples.map((s) => (
-            <button
-              key={s.file}
-              type="button"
-              onClick={() => onSampleSelect(s.label, s.file)}
-              className="py-2.5 px-3 bg-white hover:bg-slate-100 active:bg-slate-200 border border-slate-300 text-slate-800 rounded-lg text-xs sm:text-xs font-semibold shadow-sm transition-all cursor-pointer text-center active:scale-[0.98]"
-            >
-              {s.label}
-            </button>
-          ))}
+    <>
+      <section className="hero-section" aria-labelledby="hero-title">
+        <div className="hero-landscape" aria-hidden="true" />
+        <div className="hero-content">
+          <span className="eyebrow"><Leaf size={16} /> INTELIGENCIA PARA UN PLANETA MEJOR</span>
+          <h1 id="hero-title">Un pequeño gesto.<br /><span>Un gran cambio.</span></h1>
+          <p className="hero-description">Reciclar empieza con una foto. Descubre qué tienes<br className="desktop-break" /> en tus manos y cómo darle una segunda vida.</p>
+          <div className="upload-card">
+            <div className="upload-symbol"><ScanLine size={28} strokeWidth={1.5} /></div>
+            <h2>¿Qué vamos a reciclar hoy?</h2>
+            <p>Sube una imagen y deja que la IA te ayude.</p>
+            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileChange} aria-label="Seleccionar imagen del residuo" />
+            <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} aria-label="Tomar foto del residuo" />
+            <div className="upload-actions">
+              <button type="button" className="primary-button" onClick={() => fileInputRef.current?.click()}><ImagePlus size={20} /> Seleccionar imagen</button>
+              <button type="button" className="camera-button" onClick={() => cameraInputRef.current?.click()} aria-label="Tomar foto con la cámara"><Camera size={21} /></button>
+            </div>
+            <p className="upload-hint">o arrastra y suelta tu foto aquí</p>
+            <span className="file-formats">JPG, PNG o WEBP</span>
+          </div>
         </div>
-      </div>
-    </div>
+        <div className="landscape-caption"><Mountain size={17} /><span>Illimani · La Paz, Bolivia</span></div>
+        <a className="photo-credit" href="https://commons.wikimedia.org/wiki/File:Illimani_La_Paz.jpg" target="_blank" rel="noreferrer">Foto: EEJCC · CC BY-SA 4.0</a>
+      </section>
+      <section className="samples-section" aria-labelledby="samples-title">
+        <div className="section-heading"><div><span className="section-kicker">PRUÉBALO TÚ MISMO</span><h2 id="samples-title">La segunda vida empieza aquí.</h2></div><p>Elige una muestra para explorar.</p></div>
+        <div className="sample-grid" aria-busy={sampleLoading !== null}>
+          {samples.map((sample) => <button type="button" className="sample-card" key={sample.file} disabled={sampleLoading !== null} onClick={() => onSampleSelect(sample.label, sample.file)}>
+            <img src={`${import.meta.env.BASE_URL}samples/${sample.file}`} alt="" loading="lazy" />
+            <span>{sample.label}{sampleLoading === sample.file ? <LoaderCircle size={17} className="animate-spin" /> : <Recycle size={17} />}</span>
+          </button>)}
+        </div>
+        <span role="status" className="sample-status">{sampleLoading ? "Preparando tu imagen…" : "Una imagen. Un material. Una decisión más consciente."}</span>
+      </section>
+    </>
   );
 };

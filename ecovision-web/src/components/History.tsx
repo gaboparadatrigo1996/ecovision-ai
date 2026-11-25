@@ -15,7 +15,7 @@ export const History: React.FC<HistoryProps> = ({ items, onSelectItem, onClear }
     <div className="w-full max-w-2xl mx-auto mt-10 space-y-4">
       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2 text-slate-800">
-          <HistoryIcon className="w-4 h-4 text-[#e5322d]" />
+          <HistoryIcon className="w-4 h-4 text-[#0071e3]" />
           <h3 className="text-sm font-bold">Historial de análisis recientes ({items.length})</h3>
         </div>
         <button

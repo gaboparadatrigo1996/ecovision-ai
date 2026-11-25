@@ -72,7 +72,7 @@ export const ProbBars: React.FC<ProbBarsProps> = ({ probabilities, predictedClas
               <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
-                    isTop ? "bg-[#e5322d]" : "bg-slate-400"
+                    isTop ? "bg-[#0071e3]" : "bg-slate-400"
                   }`}
                   style={{ width: `${Math.max(prob * 100, 1.5)}%` }}
                 />

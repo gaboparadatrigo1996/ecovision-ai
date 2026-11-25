@@ -1,4 +1,5 @@
 import React from "react";
+import { MobileActionBar } from "./MobileActionBar";
 import { Prediction, WASTE_METADATA } from "../types";
 import { ProbBars } from "./ProbBars";
 import { Volume2, VolumeX, RotateCcw, AlertTriangle, CheckCircle2, Recycle } from "lucide-react";
@@ -59,7 +60,7 @@ export const ResultStage: React.FC<ResultStageProps> = ({
           type="button"
           onClick={handleToggleSpeak}
           className={`w-full py-3.5 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg text-white shadow-md transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer select-none active:scale-[0.98] ${
-            isSpeaking ? "bg-slate-800 hover:bg-slate-900" : "bg-[#e5322d] hover:bg-[#d32722] active:bg-[#cb201b]"
+            isSpeaking ? "bg-slate-800 hover:bg-slate-900" : "bg-[#0071e3] hover:bg-[#0077ed] active:bg-[#0062c4]"
           }`}
         >
           {isSpeaking ? (
@@ -175,7 +176,7 @@ export const ResultStage: React.FC<ResultStageProps> = ({
       </div>
 
       {/* Botón Flotante Pegajoso (Sticky) en Móvil: no requiere scroll */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 z-30 shadow-lg flex gap-2.5">
+      <MobileActionBar>
         <button
           type="button"
           onClick={onReset}
@@ -190,12 +191,12 @@ export const ResultStage: React.FC<ResultStageProps> = ({
           onClick={handleToggleSpeak}
           title={isSpeaking ? "Detener voz" : "Escuchar recomendación"}
           className={`px-4 py-3.5 rounded-xl font-bold text-white shadow-md transition-all flex items-center justify-center cursor-pointer active:scale-[0.98] ${
-            isSpeaking ? "bg-slate-700 active:bg-slate-800" : "bg-[#e5322d] active:bg-[#cb201b]"
+            isSpeaking ? "bg-slate-700 active:bg-slate-800" : "bg-[#0071e3] active:bg-[#0062c4]"
           }`}
         >
           {isSpeaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
         </button>
-      </div>
+      </MobileActionBar>
     </div>
   );
 };

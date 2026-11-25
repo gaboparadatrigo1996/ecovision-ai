@@ -9,7 +9,7 @@ import { AboutModal } from "./components/AboutModal";
 import { predict, checkHealth } from "./api/client";
 import { useSpeech } from "./hooks/useSpeech";
 import { Prediction, HistoryItem } from "./types";
-import { Info, AlertCircle } from "lucide-react";
+import { Info, AlertCircle, Leaf } from "lucide-react";
 
 type Stage = "idle" | "staged" | "loading" | "result";
 
@@ -19,6 +19,7 @@ export function App() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [sampleLoading, setSampleLoading] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [backendReady, setBackendReady] = useState<boolean | null>(null);
@@ -128,13 +129,18 @@ export function App() {
 
   // Selección de muestra rápida predeterminada
   const handleSampleSelect = async (_label: string, filename: string) => {
+    if (sampleLoading) return;
+    setSampleLoading(filename);
     try {
-      const response = await fetch(`/samples/${filename}`);
+      const response = await fetch(`${import.meta.env.BASE_URL}samples/${filename}`);
+      if (!response.ok || !response.headers.get("content-type")?.startsWith("image/")) throw new Error("Muestra no disponible");
       const blob = await response.blob();
       const file = new File([blob], filename, { type: "image/jpeg" });
       handleFileStaged(file);
     } catch {
-      setErrorMessage("No se pudo cargar la imagen de prueba.");
+      setErrorMessage("No se pudo cargar la imagen de prueba. Intenta con otra muestra.");
+    } finally {
+      setSampleLoading(null);
     }
   };
 
@@ -211,21 +217,22 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#f4f5f8] text-slate-800">
+    <div className="app-shell min-h-screen flex flex-col justify-between text-slate-800">
       {/* Overlay al arrastrar archivo */}
       <DragOverlay isVisible={isDraggingOver} />
 
       {/* Barra de Navegación Superior */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-3 sm:px-4 py-2.5 sm:py-3">
+      <header className="app-header sticky top-0 z-40 px-4 sm:px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo estilo iLovePDF con color entero */}
-          <div
+          <button
+            type="button"
             onClick={handleReset}
             className="flex items-center gap-2 cursor-pointer select-none"
             title="Ir al inicio"
           >
-            <div className="w-8 h-8 rounded bg-[#e5322d] text-white font-black flex items-center justify-center text-sm shadow-sm">
-              ECO
+            <div className="w-9 h-9 rounded-xl bg-[#16734b] text-white font-black flex items-center justify-center text-sm shadow-sm">
+              <Leaf size={21} strokeWidth={1.8} />
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-black tracking-tight text-slate-900">
@@ -235,11 +242,12 @@ export function App() {
                 AI
               </span>
             </div>
-          </div>
+          </button>
 
           <div className="flex items-center gap-3">
             {/* Estado del Backend */}
-            <div
+            <button
+              type="button"
               onClick={() => verifyBackend(false)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer select-none transition-colors ${
                 backendReady === true
@@ -272,7 +280,7 @@ export function App() {
                   ? "Reconectar"
                   : "Conectando..."}
               </span>
-            </div>
+            </button>
 
             {/* Botón de Información */}
             <button
@@ -290,7 +298,7 @@ export function App() {
       {/* Notificación de Error */}
       {errorMessage && (
         <div className="max-w-xl mx-auto mt-4 px-4 w-full">
-          <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-3">
+          <div role="alert" className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="flex-1 text-xs space-y-1">
               <p className="font-bold">Error en el análisis</p>
@@ -301,12 +309,14 @@ export function App() {
       )}
 
       {/* Contenedor Principal según el Estado (Stage) */}
-      <main className="flex-1 flex flex-col w-full">
+      <main id="main-content" className="flex-1 flex flex-col w-full">
+        <div key={stage} className={`stage-view stage-${stage} flex-1 flex flex-col`}>
         {stage === "idle" && (
           <>
             <HeroStage
               onFileSelect={handleFileStaged}
               onSampleSelect={handleSampleSelect}
+              sampleLoading={sampleLoading}
             />
             {history.length > 0 && (
               <div className="px-4 pb-12">
@@ -326,7 +336,6 @@ export function App() {
             previewUrl={imagePreviewUrl}
             onAnalyze={handleStartAnalysis}
             onCancel={handleReset}
-            onChangeFile={handleFileStaged}
           />
         )}
 
@@ -345,11 +354,13 @@ export function App() {
             isSpeaking={isSpeaking}
           />
         )}
+        </div>
       </main>
 
       {/* Pie de Página */}
-      <footer className="border-t border-slate-200 bg-white py-4 px-4 text-center text-xs text-slate-500 font-semibold tracking-wider select-none">
-        EcoVision AI
+      <footer className="app-footer">
+        <span>EcoVision AI · Pequeñas acciones. Un futuro más limpio.</span>
+        <span>La Paz, Bolivia</span>
       </footer>
 
       {/* Modal Acerca de */}

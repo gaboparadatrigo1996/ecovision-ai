@@ -57,7 +57,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
         {/* Content */}
         <div className="space-y-4 text-xs leading-relaxed text-slate-700">
           <div className="flex gap-3 items-start">
-            <Cpu className="w-4 h-4 text-[#e5322d] shrink-0 mt-0.5" />
+            <Cpu className="w-4 h-4 text-[#0071e3] shrink-0 mt-0.5" />
             <div>
               <strong className="text-slate-900">Arquitectura del Modelo:</strong>
               <p>
